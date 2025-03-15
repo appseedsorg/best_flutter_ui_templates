@@ -1,6 +1,5 @@
 import 'package:best_flutter_ui_templates/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'model/homelist.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -10,9 +9,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  List<HomeList> homeList = HomeList.homeList;
   AnimationController? animationController;
   bool multiple = true;
+
+  // Define your list of items here or load from another source
+  final List<Widget> gridItems = [];
 
   @override
   void initState() {
@@ -65,35 +66,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 top: 0, left: 12, right: 12),
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
-                            children: List<Widget>.generate(
-                              homeList.length,
-                              (int index) {
-                                final int count = homeList.length;
-                                final Animation<double> animation =
-                                    Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(
-                                    parent: animationController!,
-                                    curve: Interval((1 / count) * index, 1.0,
-                                        curve: Curves.fastOutSlowIn),
-                                  ),
-                                );
-                                animationController?.forward();
-                                return HomeListView(
-                                  animation: animation,
-                                  animationController: animationController,
-                                  listData: homeList[index],
-                                  callBack: () {
-                                    Navigator.push<dynamic>(
-                                      context,
-                                      MaterialPageRoute<dynamic>(
-                                        builder: (BuildContext context) =>
-                                            homeList[index].navigateScreen!,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                            children: gridItems,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: multiple ? 2 : 1,
@@ -175,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
+// Keeping the HomeListView class in case you need it for other purposes
 class HomeListView extends StatelessWidget {
   const HomeListView(
       {Key? key,
@@ -184,7 +158,7 @@ class HomeListView extends StatelessWidget {
       this.animation})
       : super(key: key);
 
-  final HomeList? listData;
+  final dynamic listData;
   final VoidCallback? callBack;
   final AnimationController? animationController;
   final Animation<double>? animation;
@@ -208,7 +182,7 @@ class HomeListView extends StatelessWidget {
                   children: <Widget>[
                     Positioned.fill(
                       child: Image.asset(
-                        listData!.imagePath,
+                        listData.imagePath,
                         fit: BoxFit.cover,
                       ),
                     ),
